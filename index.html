@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="te">
+<head>
+<!-- Navasudha Dairy Farm v29 — compact Chagallu badge + language-notice fixed. Earlier version styles retained in cascade for reference. -->
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Navasudha Dairy — Version 29</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<!-- QR Code generation for the current UPI amount -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<!-- Google Fonts: Poppins & Noto Sans Telugu -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Poppins', 'Noto Sans Telugu', sans-serif; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.8); }
+        .festive-canvas { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+        
+        /* Subtle In-Card Micro-Animations */
+        @keyframes miniPourStream {
+            0% { height: 0%; opacity: 0; }
+            40% { height: 100%; opacity: 1; }
+            80% { height: 100%; opacity: 1; }
+            100% { height: 0%; opacity: 0; }
+        }
+        @keyframes packDropBounce {
+            0% { transform: translateY(-20px); opacity: 0; }
+            50% { transform: translateY(0); opacity: 1; }
+            70% { transform: translateY(-5px); }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        .animate-mini-pour { animation: miniPourStream 1s ease-in-out forwards; }
+        .animate-pack-drop { animation: packDropBounce 0.8s ease-out forwards; }
+        
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        body { transition: background 700ms ease, color 300ms ease; }
+        body.theme-morning { background: linear-gradient(135deg, #0b1220 0%, #102a56 55%, #075985 100%) !important; }
+        body.theme-evening { background: linear-gradient(135deg, #0b1220 0%, #102a56 55%, #075985 100%) !important; }
+        body.theme-evening #festivalBannerContainer { background: linear-gradient(90deg, #172554, #1d4ed8, #075985) !important; }
+        body.theme-evening #heroCard { background: linear-gradient(135deg, #0f172a, #172554, #1e40af) !important; border-color: rgba(96,165,250,.55) !important; }
+        body.theme-evening button[onclick="submitOrderWhatsApp()"] { background: linear-gradient(90deg,#1d4ed8,#0284c7) !important; }
+        body.theme-evening .theme-accent { color: #1d4ed8 !important; }
+        body.theme-evening .stock-panel { background: rgba(219,234,254,.94) !important; border-color: #93c5fd !important; }
+        @media (prefers-reduced-motion: reduce) { body { transition: none; } .animate-mini-pour,.animate-pack-drop { animation: none; } #festivalGreetingCard { animation: none !important; } }
+        #festivalGreetingCard { animation: festivalGlow 3s ease-in-out infinite alternate; }
+        @keyframes festivalGlow { from { box-shadow: 0 0 0 rgba(245,158,11,0); } to { box-shadow: 0 0 18px rgba(245,158,11,.22); } }
+        #bottomUtilityDock { padding-bottom: max(0.5rem, env(safe-area-inset-bottom)); }
+        @media (max-width: 380px) { #bottomUtilityDock button { padding-left: .55rem; padding-right: .55rem; } #lunarDateLabel { font-size: 9px; } }
+    
+.ndf-brand-masthead{background:radial-gradient(ellipse at 82% 20%,rgba(181,220,113,.32),transparent 35%),linear-gradient(120deg,#082f1f,#14532d 48%,#365314);color:#fff;position:relative}
+.ndf-brand-inner{max-width:1280px;margin:auto;padding:22px 18px;display:flex;align-items:center;gap:14px;position:relative;min-height:112px}
+.ndf-brand-emblem{width:68px;height:68px;flex:0 0 68px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;background:linear-gradient(145deg,#fff7d6,#e6b84e);border:3px solid #fff4c0;box-shadow:0 5px 18px #0005;font-size:31px}
+.ndf-brand-emblem span{position:absolute;font-size:20px;right:-5px;bottom:-3px}
+.ndf-brand-copy{min-width:0;flex:1}.ndf-brand-name{font-weight:900;font-size:clamp(22px,4.5vw,38px);line-height:1.12;letter-spacing:-.02em;margin:0;color:#fff9d9;text-shadow:0 2px 10px #0006}.ndf-brand-place{font-size:12px;font-weight:700;margin:5px 0 0;color:#e6f5d8}.ndf-brand-tagline{font-size:11px;margin:5px 0 0;color:#fff3cf}.ndf-brand-badge{align-self:flex-end;font-size:10px;font-weight:800;color:#183a19;background:#fff4cc;border-radius:999px;padding:7px 10px;white-space:nowrap}
+@media(max-width:520px){.ndf-brand-inner{padding:17px 12px;gap:10px;min-height:96px}.ndf-brand-emblem{width:54px;height:54px;flex-basis:54px;font-size:25px}.ndf-brand-emblem span{font-size:16px}.ndf-brand-badge{display:none}.ndf-brand-place{font-size:11px}.ndf-brand-tagline{font-size:10px}}
+.ndf-banner-image{display:block;width:100%;height:auto;max-height:none;object-fit:contain;position:relative;}
+@media(max-width:520px){.ndf-banner-image{width:100%;height:auto;min-height:0;}}
+/* v17 usability and accessibility refinements */
+#policyAcceptance { scroll-margin-top: 1rem; }
+#policyAcceptance input[type="checkbox"] { flex: 0 0 1.25rem; min-width: 1.25rem; min-height: 1.25rem; }
+button, input, textarea, select { scroll-margin-bottom: 7rem; }
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid #92400e !important; outline-offset: 3px; }
+@media(max-width:380px){ .glass-card { padding: 1rem !important; } #calendarInfoCard { margin-top:.5rem; } }
+@media print { body * { visibility:hidden !important; } #receiptPrintableArea, #receiptPrintableArea * { visibility:visible !important; } #receiptPrintableArea { position:absolute; inset:0 auto auto 0; width:100%; border:0 !important; } #receiptModal button { display:none !important; } }
+
+/* Version 21 — premium animated milk vessels */
+.product-vessel{position:absolute;top:20px;right:13px;width:76px;height:112px;display:flex;align-items:center;justify-content:flex-end;flex-direction:column;pointer-events:none;z-index:3;filter:drop-shadow(0 7px 5px rgba(15,23,42,.12));transform-origin:50% 100%}
+.product-vessel .milk-liquid{position:absolute;left:0;right:0;bottom:0;height:0%;background:linear-gradient(180deg,#fffef9 0%,#fff8dc 32%,#f3d58a 100%);transition:height .85s cubic-bezier(.2,.78,.18,1);overflow:hidden;border-radius:0 0 10px 10px;box-shadow:inset 0 3px 7px rgba(255,255,255,.9),0 -2px 6px rgba(255,245,204,.55)}
+.product-vessel .milk-wave{position:absolute;left:-12%;top:-5px;width:124%;height:12px;background:rgba(255,255,255,.92);border-radius:48%;box-shadow:0 1px 5px rgba(255,255,255,.55);animation:milkWave 2s ease-in-out infinite;opacity:.9}
+.product-vessel .milk-liquid:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 28% 68%,rgba(255,255,255,.85) 0 2px,transparent 3px),radial-gradient(ellipse at 70% 82%,rgba(255,255,255,.65) 0 2px,transparent 3px),radial-gradient(ellipse at 48% 45%,rgba(255,255,255,.55) 0 1.5px,transparent 3px);background-size:24px 31px,28px 37px,20px 26px;animation:milkBubbles 2.8s linear infinite}
+.product-vessel .vessel-shine{position:absolute;left:5px;top:8px;height:70%;width:5px;border-radius:8px;background:linear-gradient(90deg,rgba(255,255,255,.85),rgba(255,255,255,.12));pointer-events:none;z-index:2}
+.product-vessel .vessel-quantity{position:absolute;right:-3px;bottom:-2px;min-width:24px;height:24px;padding:0 6px;border:2px solid #fff;border-radius:99px;background:linear-gradient(135deg,#f59e0b,#b45309);color:#fff;font-size:11px;font-weight:900;line-height:20px;text-align:center;box-shadow:0 3px 10px rgba(180,83,9,.3);transition:transform .22s ease}
+.product-vessel.is-active{animation:vesselCelebrate .5s cubic-bezier(.2,.8,.2,1)}
+.product-vessel.is-active .vessel-quantity{transform:scale(1.18)}
+.product-vessel:after{content:"";position:absolute;top:0;right:31px;width:5px;height:0;border-radius:99px;background:linear-gradient(180deg,rgba(255,255,255,0),#fff9df 25%,#f4d889 100%);opacity:0;transform-origin:top;z-index:0}
+.product-vessel.is-active:after{animation:milkPourStream .55s ease-out}
+.product-vessel:before{content:"✦";position:absolute;top:15px;right:0;color:#fbbf24;font-size:15px;opacity:0;z-index:5;text-shadow:0 0 8px #fef3c7}
+.product-vessel.is-active:before{animation:milkSparkle .65s ease-out}
+/* 1 Litre: polished stainless-steel dairy can with a clear front window */
+.vessel-one-litre .vessel-body{position:absolute;bottom:8px;width:55px;height:69px;border:3px solid #aab8c4;border-radius:10px 10px 13px 13px;background:linear-gradient(100deg,#8796a2 0%,#f8fafc 16%,#cbd5e1 31%,#f8fafc 48%,#94a3b8 65%,#eef2f7 82%,#8493a0 100%);overflow:hidden;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5),inset 0 -7px 10px rgba(15,23,42,.13),0 3px 4px rgba(15,23,42,.12)}
+.vessel-one-litre .vessel-body:after{content:"";position:absolute;inset:7px 10px 6px;border:1px solid rgba(100,116,139,.38);border-radius:5px;background:linear-gradient(90deg,rgba(255,255,255,.38),rgba(255,255,255,.03));pointer-events:none}
+.vessel-one-litre .vessel-neck{position:absolute;top:20px;width:27px;height:18px;border:3px solid #aab8c4;border-bottom:0;border-radius:7px 7px 0 0;background:linear-gradient(90deg,#9aa8b4,#f8fafc 35%,#aab8c4 70%,#eef2f7)}
+.vessel-one-litre .vessel-cap{position:absolute;top:13px;width:31px;height:9px;background:linear-gradient(180deg,#f8fafc,#94a3b8);border:1px solid #8795a1;border-radius:4px 4px 2px 2px;box-shadow:0 2px 2px #64748b55}
+.vessel-one-litre .milk-liquid{border-radius:0 0 7px 7px;opacity:.96}
+/* 500 ml: clear glass bottle with shoulders, neck and bright rim */
+.vessel-half-litre .bottle-body{position:absolute;bottom:8px;width:47px;height:70px;border:2px solid rgba(148,163,184,.9);border-radius:11px 11px 13px 13px;background:linear-gradient(90deg,rgba(148,163,184,.55),rgba(255,255,255,.8) 18%,rgba(226,242,250,.24) 45%,rgba(255,255,255,.75) 72%,rgba(148,163,184,.55));overflow:hidden;box-shadow:inset 2px 0 5px rgba(255,255,255,.9),inset -3px 0 5px rgba(100,116,139,.12),0 3px 4px rgba(15,23,42,.1)}
+.vessel-half-litre .bottle-neck{position:absolute;top:18px;width:22px;height:23px;border:2px solid #a5b4c1;border-bottom:0;border-radius:5px 5px 0 0;background:linear-gradient(90deg,rgba(148,163,184,.55),rgba(255,255,255,.7),rgba(148,163,184,.45))}
+.vessel-half-litre .bottle-rim{position:absolute;top:13px;width:27px;height:7px;border:2px solid #94a3b8;border-radius:4px;background:linear-gradient(180deg,#fff,#cbd5e1);box-shadow:0 2px 2px #64748b33}
+.vessel-half-litre .milk-liquid{border-radius:0 0 9px 9px}
+/* 250 ml: clear tumbler with a thick glass base */
+.vessel-quarter-litre .tumbler-body{position:absolute;bottom:9px;width:52px;height:66px;border:2px solid rgba(148,163,184,.9);border-top-width:3px;border-radius:5px 5px 12px 12px;background:linear-gradient(90deg,rgba(148,163,184,.5),rgba(255,255,255,.8) 16%,rgba(226,242,250,.25) 48%,rgba(255,255,255,.7) 78%,rgba(148,163,184,.4));overflow:hidden;transform:perspective(70px) rotateX(-2deg);box-shadow:inset 2px 0 5px rgba(255,255,255,.8),inset 0 -5px 5px rgba(148,163,184,.22),0 3px 4px rgba(15,23,42,.1)}
+.vessel-quarter-litre .tumbler-body:after{content:"";position:absolute;left:3px;right:3px;bottom:2px;height:4px;border-radius:0 0 8px 8px;background:rgba(255,255,255,.55);pointer-events:none}
+.vessel-quarter-litre .milk-liquid{border-radius:0 0 8px 8px}
+/* Card layout keeps text clear of the illustration; active card glows gently. */
+#card1L,#card500ml,#card250ml{min-height:178px;padding-right:92px!important;isolation:isolate;transition:box-shadow .3s ease,border-color .3s ease,transform .3s ease}
+#card1L:before,#card500ml:before,#card250ml:before{content:"";position:absolute;right:-24px;top:-28px;width:145px;height:145px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,.17),rgba(251,191,36,0) 70%);pointer-events:none;z-index:0}
+#card1L h4,#card500ml h4,#card250ml h4{position:relative;z-index:1;line-height:1.45;max-width:100%}
+#card1L .vessel-quantity,#card500ml .vessel-quantity,#card250ml .vessel-quantity{z-index:4}
+#card1L:has(#qty1L:not(:empty)),#card500ml:has(#qty500ml:not(:empty)),#card250ml:has(#qty250ml:not(:empty)){transition:box-shadow .3s ease}
+@keyframes milkWave{0%,100%{transform:translateX(-4px) rotate(-2deg)}50%{transform:translateX(4px) rotate(2deg)}}
+@keyframes milkBubbles{from{background-position:0 0,8px 10px,3px 6px}to{background-position:0 -62px,8px -64px,3px -52px}}
+@keyframes milkRise{0%{filter:brightness(1.4);transform:translateY(4px)}45%{filter:brightness(1.12)}100%{filter:brightness(1);transform:translateY(0)}}
+@keyframes milkPourStream{0%{height:0;opacity:0;transform:scaleY(.2)}25%{opacity:1}70%{height:29px;opacity:1;transform:scaleY(1)}100%{height:0;opacity:0;transform:scaleY(.3)}}
+@keyframes milkSparkle{0%{opacity:0;transform:scale(.3) rotate(-25deg)}35%{opacity:1;transform:scale(1.25) rotate(15deg)}100%{opacity:0;transform:scale(.7) rotate(35deg)}}
+@keyframes vesselCelebrate{0%{transform:scale(1) rotate(0)}35%{transform:scale(1.045) rotate(-2deg)}70%{transform:scale(1.025) rotate(1deg)}100%{transform:scale(1) rotate(0)}}
+@media(max-width:380px){.product-vessel{right:8px;transform:scale(.88);transform-origin:top right}#card1L,#card500ml,#card250ml{padding-right:82px!important;min-height:164px}}
+@media(prefers-reduced-motion:reduce){.product-vessel,.product-vessel .milk-liquid,.product-vessel .milk-wave,.product-vessel:before,.product-vessel:after{transition:none!important;animation:none!important}}
+
+
+/* Version 24: stable dairy-blue background; no time-based orange theme. */
+body#bodyRoot, body#bodyRoot.theme-morning, body#bodyRoot.theme-evening {
+  background: linear-gradient(135deg, #0b1220 0%, #102a56 55%, #075985 100%) !important;
+  color: #f8fafc;
+}
+/* Calendar/Panchang is internal date data only, never a customer-facing calendar panel. */
+#calendarInfoCard { display: none !important; }
+#festivalCornerGreeting {
+  position: fixed; top: 82px; right: 10px; z-index: 45; width: min(285px, calc(100vw - 20px));
+  display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 14px;
+  border: 1px solid rgba(147,197,253,.45); background: rgba(15,23,42,.94); color: #f8fafc;
+  box-shadow: 0 8px 24px rgba(2,6,23,.22); backdrop-filter: blur(8px); font-size: 11px; line-height: 1.35;
+}
+#festivalCornerGreeting[hidden] { display: none !important; }
+#festivalCornerGreeting .corner-bottle { display:inline-flex; flex:0 0 26px; width:26px; height:30px; align-items:center; justify-content:center; font-size:23px; transform-origin: bottom center; }
+#festivalCornerGreeting .corner-title { display:block; font-weight:800; color:#bfdbfe; font-size:11px; }
+#festivalCornerGreeting .corner-en, #festivalCornerGreeting .corner-te { display:block; }
+#festivalCornerGreeting .corner-te { color:#fde68a; }
+#festivalCornerGreeting .corner-dismiss { flex:0 0 auto; border:0; background:transparent; color:#cbd5e1; padding:2px 4px; font-size:17px; line-height:1; }
+#festivalCornerGreeting.anim-bob .corner-bottle { animation:v24BottleBob 2.6s ease-in-out infinite; }
+#festivalCornerGreeting.anim-sway .corner-bottle { animation:v24BottleSway 3s ease-in-out infinite; }
+#festivalCornerGreeting.anim-pulse .corner-bottle { animation:v24BottlePulse 2.4s ease-in-out infinite; }
+@keyframes v24BottleBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
+@keyframes v24BottleSway { 0%,100%{transform:rotate(0)} 50%{transform:rotate(-4deg)} }
+@keyframes v24BottlePulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+@media(max-width:480px){ #festivalCornerGreeting{top:76px;right:8px;width:min(260px,calc(100vw - 16px));padding:7px 8px;} }
+@media(prefers-reduced-motion:reduce){#festivalCornerGreeting .corner-bottle{animation:none!important;}}
+
+</style>
+<style>
+/* Version 12: restrained, accessible interaction feedback */
+@keyframes ndfRipple { to { transform:scale(3.5); opacity:0; } }
+.ndf-ripple-host{position:relative;overflow:hidden;isolation:isolate}
+.ndf-ripple{position:absolute;border-radius:50%;pointer-events:none;z-index:50;background:rgba(245,158,11,.35);transform:scale(0);animation:ndfRipple .55s ease-out forwards}
+@keyframes ndfTap {0%{transform:scale(1)}45%{transform:scale(.975)}100%{transform:scale(1)}}
+.ndf-tap-feedback{animation:ndfTap .22s ease-out}
+@keyframes ndfFestivalGlow {0%,100%{box-shadow:0 0 0 rgba(245,158,11,0)}50%{box-shadow:0 0 22px rgba(245,158,11,.28)}}
+#festivalGreetingCard:not(.hidden){animation:ndfFestivalGlow 3s ease-in-out infinite}
+@keyframes ndfCalendarReveal {from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+#calendarExtraDetails:not(.hidden){animation:ndfCalendarReveal .24s ease-out}
+@media(prefers-reduced-motion:reduce){.ndf-ripple,.ndf-tap-feedback,#festivalGreetingCard:not(.hidden),#calendarExtraDetails:not(.hidden){animation:none!important;transition:none!important}}
+</style>
+
+<style id="v25-small-corner-animation-fix">
+/* Version 25: simple product cards; retain the small corner greeting. */
+.product-vessel {
+  display: none !important;
+  animation: none !important;
+}
+#card1L, #card500ml, #card250ml {
+  min-height: 0 !important;
+  padding-right: 1rem !important;
+}
+#card1L::before, #card500ml::before, #card250ml::before {
+  display: none !important;
+  animation: none !important;
+}
+#card1L h4, #card500ml h4, #card250ml h4 {
+  max-width: 100% !important;
+}
+@media (max-width: 380px) {
+  #card1L, #card500ml, #card250ml {
+    min-height: 0 !important;
+    padding-right: 1rem !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #v24FestivalGreeting *,
+  #v24FestivalGreeting {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+</style>
+
+
+
+<style id="v26-automatic-time-themes">
+/* Version 26: restore distinct automatic morning and evening themes.
+   applyTimeTheme() already switches body.theme-morning / body.theme-evening
+   according to local time; these rules make the two states visually distinct. */
+body#bodyRoot.theme-morning {
+  background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 52%, #dbeafe 100%) !important;
+  color: #0f172a !important;
+}
+body#bodyRoot.theme-evening {
+  background: linear-gradient(135deg, #0b1220 0%, #102a56 55%, #075985 100%) !important;
+  color: #f8fafc !important;
+}
+body#bodyRoot.theme-morning .glass-panel,
+body#bodyRoot.theme-morning .glass-card {
+  background: rgba(255,255,255,.88) !important;
+  color: #0f172a !important;
+  border-color: rgba(125,211,252,.65) !important;
+  box-shadow: 0 8px 24px rgba(30,64,175,.08) !important;
+}
+body#bodyRoot.theme-morning .glass-input {
+  background: rgba(255,255,255,.96) !important;
+  color: #0f172a !important;
+  border-color: #bfdbfe !important;
+}
+body#bodyRoot.theme-morning #heroCard {
+  background: linear-gradient(135deg,#e0f2fe,#eff6ff,#dbeafe) !important;
+  color: #0f172a !important;
+  border-color: #93c5fd !important;
+}
+body#bodyRoot.theme-morning #heroCard p,
+body#bodyRoot.theme-morning .glass-panel p,
+body#bodyRoot.theme-morning .glass-card p {
+  color: #334155;
+}
+body#bodyRoot.theme-morning #festivalBannerContainer {
+  background: linear-gradient(90deg,#dbeafe,#e0f2fe,#bfdbfe) !important;
+  color: #0f172a !important;
+}
+body#bodyRoot.theme-morning #bottomUtilityDock {
+  background: rgba(255,255,255,.96) !important;
+  border-color: #bfdbfe !important;
+}
+body#bodyRoot.theme-morning #festivalCornerGreeting {
+  background: rgba(255,255,255,.96) !important;
+  color: #0f172a !important;
+  border-color: #93c5fd !important;
+}
+body#bodyRoot.theme-evening .glass-panel {
+  background: rgba(30,41,59,.7) !important;
+  color: #f8fafc !important;
+}
+body#bodyRoot.theme-evening .glass-card {
+  back
